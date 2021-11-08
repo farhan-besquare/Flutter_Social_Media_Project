@@ -126,7 +126,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: Row(
                               children: [
                                 Text(
-                                  'Latest',
+                                  'Oldest',
                                   style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.w400),
@@ -195,7 +195,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                   post[index]
                                                       .containsKey('image')
                                               ? '${post[index]['image']}'
-                                              : 'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg'),
+                                              : 'https://www.prestashop.com/sites/default/files/styles/blog_750x320/public/blog/2019/10/banner_error_404.jpg?itok=eAS4swln'),
                                           fit: BoxFit.cover,
                                           height: 130,
                                         ),

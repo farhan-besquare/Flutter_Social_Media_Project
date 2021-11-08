@@ -39,7 +39,7 @@ class PostDetails extends StatelessWidget {
           child: Image(
             image: NetworkImage(Uri.parse(url).isAbsolute
                 ? url
-                : 'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg'),
+                : 'https://www.prestashop.com/sites/default/files/styles/blog_750x320/public/blog/2019/10/banner_error_404.jpg?itok=eAS4swln'),
             fit: BoxFit.cover,
           ),
         ),
