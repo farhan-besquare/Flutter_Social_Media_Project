@@ -28,6 +28,7 @@ class PostDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: const Text('Post Details'),
       ),
       body: ListView(children: [

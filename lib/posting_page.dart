@@ -86,6 +86,8 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
+        centerTitle: true,
         title: const Text('Posting Page'),
       ),
       body: ListView(
@@ -98,12 +100,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 children: [
                   Row(
                     children: [
-                      const Padding(
+                      Padding(
                         padding: EdgeInsets.only(left: 5),
-                        child: Icon(
-                          Icons.person_outline_rounded,
-                          size: 30,
-                        ),
+                        child: Icon(Icons.person_outline_rounded, size: 30),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(left: 2),
@@ -111,11 +110,22 @@ class _MyHomePageState extends State<MyHomePage> {
                           'Username: ${widget.name}',
                           style: TextStyle(fontSize: 16),
                         ),
-                      )
+                      ),
                     ],
                   ),
                   Row(
                     children: [
+                      IconButton(
+                        icon: Icon(Icons.refresh_outlined),
+                        iconSize: 30,
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      MyHomePage(name: widget.name)));
+                        },
+                      ),
                       Padding(
                         padding: const EdgeInsets.only(right: 5),
                         child: GestureDetector(
