@@ -46,10 +46,21 @@ class _MyHomePageState extends State<MyHomePage> {
 
       setState(() {
         post = decodedMessage['data']['posts'];
+        post.sort((b, a) {
+          var aDate = a['date'];
+          var bDate = b['date'];
+          return aDate.compareTo(bDate);
+        });
       });
     });
 
     channel.sink.add('{"type": "get_posts"}');
+  }
+
+  void deletePost(id) {
+    channel.sink
+        .add('{"type": "sign_in", "data": { "name": "${widget.name}"}}');
+    channel.sink.add('{"type": "delete_post", "data": {"postId": "$id"}}');
   }
 
   @override
@@ -58,7 +69,9 @@ class _MyHomePageState extends State<MyHomePage> {
     getPost();
   }
 
+  @override
   void dispose() {
+    channel.sink.close();
     super.dispose();
   }
 
@@ -83,17 +96,28 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.only(left: 10),
-                    child: Icon(
-                      Icons.settings_outlined,
-                      size: 30,
-                    ),
+                  Row(
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(left: 5),
+                        child: Icon(
+                          Icons.person_outline_rounded,
+                          size: 30,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 2),
+                        child: Text(
+                          'Username: ${widget.name}',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      )
+                    ],
                   ),
                   Row(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(right: 10),
+                        padding: const EdgeInsets.only(right: 5),
                         child: GestureDetector(
                           onTap: scrollDown,
                           child: Card(
@@ -114,13 +138,6 @@ class _MyHomePageState extends State<MyHomePage> {
                               ],
                             ),
                           ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(right: 10),
-                        child: Icon(
-                          Icons.sort_by_alpha_rounded,
-                          size: 30,
                         ),
                       ),
                       Padding(
@@ -300,10 +317,24 @@ class _MyHomePageState extends State<MyHomePage> {
                                                         color: Colors.red,
                                                         size: 30,
                                                       )),
-                                            Icon(
-                                              Icons.delete_forever_outlined,
-                                              size: 30,
-                                            )
+                                            IconButton(
+                                                icon: Icon(Icons
+                                                    .delete_forever_outlined),
+                                                iconSize: 30,
+                                                onPressed: widget.name ==
+                                                        post[index]['author']
+                                                    ? () {
+                                                        deletePost(
+                                                            post[index]['_id']);
+                                                        Navigator.push(
+                                                            this.context,
+                                                            MaterialPageRoute(
+                                                                builder: (context) =>
+                                                                    PostingPage(
+                                                                        name: widget
+                                                                            .name)));
+                                                      }
+                                                    : null)
                                           ],
                                         ))
                                   ],

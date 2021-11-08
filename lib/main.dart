@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:social_platform_project/cubit/cubit.dart';
 import 'package:social_platform_project/posting_page.dart';
 import 'dart:io';
 
@@ -21,7 +23,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.teal,
       ),
-      home: const MyHomePage(),
+      home: BlocProvider(
+        create: (context) => SocialCubit(),
+        child: const MyHomePage(),
+      ),
     );
   }
 }
@@ -37,14 +42,14 @@ class _MyHomePageState extends State<MyHomePage> {
   final _formKey = GlobalKey<FormState>();
   final channel =
       IOWebSocketChannel.connect('ws://besquare-demo.herokuapp.com');
-  String Username = '';
+  String username = '';
 
-  void login(Username) {
-    channel.stream.listen((posting) {
-      final decodedMessage = jsonDecode(posting);
-    });
-    channel.sink.add('{"type": "sign_in", "data": { "name": "$Username"}}');
-  }
+  // void login(Username) {
+  //   channel.stream.listen((posting) {
+  //     final decodedMessage = jsonDecode(posting);
+  //   });
+  //   channel.sink.add('{"type": "sign_in", "data": { "name": "$Username"}}');
+  // }
 
   @override
   void initState() {
@@ -57,56 +62,60 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text('widget.title'),
       ),
-      body: ListView(
-        children: [
-          Image.asset('assets/images/camera-resize.png'),
-          Form(
-            key: _formKey,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 10, left: 30, right: 30),
-              child: TextFormField(
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a username';
-                  }
-                  return null;
-                },
-                onChanged: (String? value) {
-                  setState(() {
-                    Username = value!;
-                  });
-                },
-                decoration: const InputDecoration(
-                    prefixIcon: Icon(Icons.person_outline_rounded),
-                    border: OutlineInputBorder(),
-                    labelText: 'Username',
-                    hintText: 'Enter a username'),
+      body: BlocBuilder<SocialCubit, String>(
+          bloc: context.read<SocialCubit>(),
+          builder: (context, state) {
+            return ListView(children: [
+              Image.asset('assets/images/camera-resize.png'),
+              Form(
+                key: _formKey,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 10, left: 30, right: 30),
+                  child: TextFormField(
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a username';
+                      }
+                      return null;
+                    },
+                    onChanged: (String? value) {
+                      setState(() {
+                        username = value!;
+                      });
+                    },
+                    decoration: const InputDecoration(
+                        prefixIcon: Icon(Icons.person_outline_rounded),
+                        border: OutlineInputBorder(),
+                        labelText: 'Username',
+                        hintText: 'Enter a username'),
+                  ),
+                ),
               ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 30, right: 30),
-            child: Padding(
-              padding: const EdgeInsets.only(top: 20.0),
-              child: ElevatedButton(
-                child: const Text('Enter the app'),
-                style: ElevatedButton.styleFrom(
-                    fixedSize: const Size(240, 50),
-                    primary: Colors.teal.shade300),
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => PostingPage(name: Username)));
-                    login(Username);
-                  }
-                },
-              ),
-            ),
-          )
-        ],
-      ),
+              Padding(
+                padding: const EdgeInsets.only(left: 30, right: 30),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 20.0),
+                  child: ElevatedButton(
+                    child: const Text('Enter the app'),
+                    style: ElevatedButton.styleFrom(
+                        fixedSize: const Size(240, 50),
+                        primary: Colors.teal.shade300),
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    PostingPage(name: username)));
+                        context.read<SocialCubit>().openConnection();
+                        context.read<SocialCubit>().login(username);
+                      }
+                    },
+                  ),
+                ),
+              )
+            ]);
+          }),
       // This trailing comma makes auto-formatting nicer for build methods.
     );
   }

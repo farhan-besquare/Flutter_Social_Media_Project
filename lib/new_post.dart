@@ -142,12 +142,11 @@ class _NewPostPageState extends State<NewPostPage> {
                                         'Your post have been uploaded!'),
                                     action: SnackBarAction(
                                       label: 'OK',
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
+                                      onPressed: () {},
                                     ),
                                   ));
                                   newPost(title, description, url);
+                                  Navigator.pop(context);
                                 }
                               }
                             : null,
